@@ -1,7 +1,7 @@
 var express = require('express');
 var session = require('express-session');
 var route = express.Router();
-var [listNewsFeed, listAccounts] = require('./data');
+var [listNewsFeed, listAccounts, User, Post] = require('./data');
 var bodyParser = require('body-parser');
 route.use(bodyParser.urlencoded({ extended: true }));
 route.use(session({ secret: "Shh, its a secret!" }));
@@ -22,11 +22,9 @@ route.post('/login', function (req, res) {
     if (isNotExistUsernameOrPassword) {
         apiResponse(res, 400, false, 'Please enter both username and password', null);
     } else {
-        const accountFind = listAccounts.find(function (user) {
-            if (user.username === usernameLogin)
-                return true;
-            return false;
-        });
+        const accountFind = User.findOne({username: usernameLogin})
+        .then()
+        .catch();
         if (accountFind) {
             if (accountFind.password === passwordLogin) {
                 req.session.user = accountFind;
@@ -73,7 +71,7 @@ route.get('/friends/posts', function (req, res) {
 
 
 // 4. Khi vào trang cá nhân-> API lấy danh sách bài viết của người dùng đang truy cập
-route.get('/user/:username', function (req, res) {
+route.get('/users/:username/posts', function (req, res) {
     const { username: usernameForGetProfile } = req.params;
     const resultPost = listNewsFeed.filter((post) => {
         return post.author === usernameForGetProfile;
@@ -96,8 +94,8 @@ route.post('/signup', (req, res) => {
         if (userExists)
             apiResponse(res, 400, false, 'User Already Exists! Login or choose another username', null);
         else {
-            var listFriendNew = [];
-            var newUser = { id: getRandomArbitrary(1, 1000), password: passwordSignUp, username: usernameSignUp, fullname: fullnameSignUp, friends: listFriendNew };
+            let listFriendNew = [];
+            let newUser = { id: getRandomArbitrary(1, 1000), password: passwordSignUp, username: usernameSignUp, fullname: fullnameSignUp, friends: listFriendNew };
             listAccounts.push(newUser);
             apiResponse(res, 200, true, 'Create success', newUser)
         }

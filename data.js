@@ -1,56 +1,39 @@
+const { ObjectId } = require("mongodb");
+let mongoose = require("mongoose");
+const listAccounts = [];
+const listNewsFeed = [];
 
-    let listAccounts = [
-        {
-            username: 'account_a',
-            password: '123',
-            fullname: 'account a',
-            friends: ['account_b']
-        },
-        {
-            username: 'account_b',
-            password: '123',
-            fullname: 'account b',
-            friends: ['account_a', 'account_c']
-        },
-        {
-            username: 'account_c',
-            password: '123',
-            fullname: 'account c',
-            friends: []
-        }
-    ];
-    
-    let listNewsFeed = [
-        {
-            title: `1. industry. Lorem Ipsum has been the industrys standard dum`,
-            content: `Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum`,
-            author: 'account_a',
-            data: '10/05/2023'
-        },
-        {
-            title: `2. industry. Lorem Ipsum has been the industrys standard dum`,
-            content: `Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum`,
-            author: 'account_b',
-            data: '09/05/2023'
-        },
-        {
-            title: `3. industry. Lorem Ipsum has been the industrys standard dum`,
-            content: `Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum`,
-            author: 'account_a',
-            data: '08/05/2023'
-        },
-        {
-            title: `4. industry. Lorem Ipsum has been the industrys standard dum`,
-            content: `Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum`,
-            author: 'account_b',
-            data: '05/05/2023'
-        },
-        {
-            title: `5. industry. Lorem Ipsum has been the industrys standard dum`,
-            content: `Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum`,
-            author: 'account_a',
-            data: '05/05/2023'
-        }
-    ]
+//define schema
+const postSchema = new mongoose.Schema({
+  id: ObjectId,
+  title: String,
+  content: String,
+  author: String,
+  data: String,
+});
 
-module.exports=[listNewsFeed, listAccounts]
+
+const userSchema = new mongoose.Schema({
+  id: ObjectId,
+  username: String,
+  password: String,
+  friends: Array,
+});
+
+//define model
+const User = mongoose.model("User", userSchema);
+
+const Post = mongoose.model("Post", postSchema);
+module.exports=User;
+module.exports=Post;
+// Connect to the MongoDB database
+mongoose
+  .connect("mongodb://127.0.0.1:27017/basiSocialNetwrork")
+  .then(() => {
+    console.log("Database connection successful");
+  })
+  .catch((err) => {
+    console.error("Database connection error:", err);
+  });
+
+module.exports = [listNewsFeed, listAccounts];
